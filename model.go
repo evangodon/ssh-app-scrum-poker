@@ -1,22 +1,24 @@
 package main
 
 type user struct {
-	id   string
+	id   string // user remote address + username
 	name string
 }
 
-type shared struct {
+type room struct {
 	users []user
+  status string
 }
 
 type model struct {
 	term   string
 	width  int
 	height int
-	shared shared
+	room room
 }
 
-func newModel() model{
+func newModel(u user) model{
 
-  return model{}
+  return model{
+  }
 }

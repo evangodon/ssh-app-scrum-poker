@@ -29,9 +29,9 @@ func main() {
 			lm.Middleware(),
 			func(h ssh.Handler) ssh.Handler {
 				return func(s ssh.Session) {
-          // Add new user here
+					// Add new user here
 					h(s)
-          // Remove user here 
+					// Remove user here
 				}
 			},
 		),

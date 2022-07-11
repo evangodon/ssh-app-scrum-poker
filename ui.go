@@ -44,7 +44,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
 	s := "Your term is %s\n"
 	s += "Your window size is x: %d y: %d\n\n"
-	s += "Your message is %s\n\n"
 	s += "Press 'q' to quit\n"
-	return fmt.Sprintf(s, m.term, m.width, m.height, m.shared)
+	return fmt.Sprintf(s, m.term, m.width, m.height)
 }
