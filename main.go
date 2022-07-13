@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/charmbracelet/wish"
-	bm "github.com/charmbracelet/wish/bubbletea"
 	lm "github.com/charmbracelet/wish/logging"
 	"github.com/gliderlabs/ssh"
 )
@@ -21,17 +20,20 @@ const (
 )
 
 func main() {
+	room := newRoom()
+
 	s, err := wish.NewServer(
 		wish.WithAddress(fmt.Sprintf("%s:%d", host, port)),
 		wish.WithHostKeyPath(".ssh/term_info_ed25519"),
 		wish.WithMiddleware(
-			bm.Middleware(teaHandler),
+			customBubbleteaMiddleware(&room),
 			lm.Middleware(),
 			func(h ssh.Handler) ssh.Handler {
 				return func(s ssh.Session) {
-					// Add new user here
+					user := newUser(s)
+					room.addUser(&user)
 					h(s)
-					// Remove user here
+					room.removeUser(user)
 				}
 			},
 		),
