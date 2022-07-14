@@ -10,6 +10,13 @@ import (
 	"github.com/muesli/termenv"
 )
 
+func newModel(u *user, r *room) model {
+	return model{
+		user: u,
+		room: r,
+	}
+}
+
 func customBubbleteaMiddleware(room *room) wish.Middleware {
 	newProg := func(m tea.Model, opts ...tea.ProgramOption) *tea.Program {
 		p := tea.NewProgram(m, opts...)

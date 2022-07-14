@@ -1,14 +1,59 @@
 package main
 
-type model struct {
-	user *user
-	room *room
+import (
+	"strconv"
+
+	tea "github.com/charmbracelet/bubbletea"
+)
+
+type window struct {
+	height int
+	width  int
 }
 
-func newModel(u *user, r *room) model {
+type model struct {
+	user   *user
+	room   *room
+	window window
+	logs   []string
+}
 
-	return model{
-		user: u,
-		room: r,
+func (m model) Init() tea.Cmd {
+	return nil
+}
+
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.window.height = msg.Height
+		m.window.width = msg.Width
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "0", "1", "2", "3", "5", "8":
+			{
+				v, _ := strconv.Atoi(msg.String())
+				m.user.makeVote(v)
+				m.room.syncUI(m.user)
+			}
+
+		case "q", "ctrl+c":
+			return m, tea.Quit
+		}
 	}
+	return m, nil
+}
+
+var options = []int{0, 1, 2, 3, 5, 8}
+
+func (m model) View() string {
+	container := m.NewContainer()
+
+	s := m.header()
+	s += "\n"
+	s += m.listUsers()
+
+	s += m.roomInfo()
+	s += m.listOptions(options)
+
+	return container.Render(s)
 }

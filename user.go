@@ -11,6 +11,7 @@ type user struct {
 	id      string // user remote address + username
 	name    string
 	program *tea.Program
+	vote    int
 }
 
 func createId(s ssh.Session) string {
@@ -21,5 +22,10 @@ func newUser(s ssh.Session) user {
 	return user{
 		id:   createId(s),
 		name: s.User(),
+		vote: -1,
 	}
+}
+
+func (u *user) makeVote(vote int) {
+	u.vote = vote
 }
