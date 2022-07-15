@@ -33,17 +33,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			{
 				v, _ := strconv.Atoi(msg.String())
 				m.user.makeVote(v)
-				m.room.syncUI(m.user)
+				m.room.syncUI(m.user, noLog)
 			}
 
-		case "q", "ctrl+c":
+		case "q", "ctrl+c", "esc":
 			return m, tea.Quit
 		}
+	case roomLog:
+		m.logs = append(m.logs, msg.log)
+		return m, nil
 	}
+
 	return m, nil
 }
-
-var options = []int{0, 1, 2, 3, 5, 8}
 
 func (m model) View() string {
 	container := m.NewContainer()
@@ -52,8 +54,12 @@ func (m model) View() string {
 	s += "\n"
 	s += m.listUsers()
 
+	s += "\n"
 	s += m.roomInfo()
-	s += m.listOptions(options)
+	s += m.listOptions()
+	s += "\n\n\n\n"
+
+	s += m.showLogs()
 
 	return container.Render(s)
 }

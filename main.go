@@ -25,17 +25,13 @@ func main() {
 	s, err := wish.NewServer(
 		wish.WithAddress(fmt.Sprintf("%s:%d", host, port)),
 		wish.WithHostKeyPath(".ssh/term_info_ed25519"),
+		wish.WithPublicKeyAuth(func(ctx ssh.Context, key ssh.PublicKey) bool {
+			return true
+		}),
 		wish.WithMiddleware(
 			customBubbleteaMiddleware(&room),
 			lm.Middleware(),
-			func(h ssh.Handler) ssh.Handler {
-				return func(s ssh.Session) {
-					user := newUser(s)
-					room.addUser(&user)
-					h(s)
-					room.removeUser(user)
-				}
-			},
+			manageRoomMembers(&room),
 		),
 	)
 	if err != nil {

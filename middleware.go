@@ -10,10 +10,13 @@ import (
 	"github.com/muesli/termenv"
 )
 
+var welcomeMsg = "Welcome to Scrum Poker 👋. Use your num keys to make a selection.\n"
+
 func newModel(u *user, r *room) model {
 	return model{
 		user: u,
 		room: r,
+		logs: []string{welcomeMsg},
 	}
 }
 
@@ -38,4 +41,16 @@ func customBubbleteaMiddleware(room *room) wish.Middleware {
 		return program
 	}
 	return bm.MiddlewareWithProgramHandler(teaHandler, termenv.ANSI256)
+}
+
+// Manage members connecting and leaving room
+func manageRoomMembers(room *room) wish.Middleware {
+	return func(h ssh.Handler) ssh.Handler {
+		return func(s ssh.Session) {
+			user := newUser(s)
+			room.addUser(&user)
+			h(s)
+			room.removeUser(user)
+		}
+	}
 }
