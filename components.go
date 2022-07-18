@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	lg "github.com/charmbracelet/lipgloss"
 )
@@ -24,14 +25,36 @@ func (m *model) NewContainer() lg.Style {
 		BorderStyle(lg.RoundedBorder())
 }
 
+var userStyle = lg.NewStyle().Width(25).Padding(1, 0)
+
 // List of users in room
 func (m *model) listUsers() string {
-	s := ""
-	for _, user := range m.room.users {
-		s += fmt.Sprintf("%s's vote: %d\n", user.name, user.vote)
+	s := fmt.Sprintf("%d member%s in room\n", len(m.room.users), "s")
+	s += "\n"
+
+	leftCol := ""
+	rightCol := ""
+
+	for i, user := range m.room.users {
+		username := userStyle.Render(user.name)
+		card := NewCardForUser(user.vote, m.room.displayVotes)
+		order := fmt.Sprintf("%d. ", i)
+		userBlock := lg.JoinHorizontal(lg.Center, order, username, card)
+
+		if i < 5 {
+			leftCol += userBlock
+			leftCol += "\n"
+		} else {
+			rightCol += userBlock
+			rightCol += "\n"
+		}
 	}
 
-	container := lg.NewStyle().Height(10)
+	container := lg.NewStyle().
+		Width(m.window.width - 15).
+		MarginBottom(2)
+	gap := strings.Repeat(" ", 30)
+	s += lg.JoinHorizontal(lg.Top, leftCol, gap, rightCol)
 
 	return container.Render(s)
 }
@@ -45,12 +68,14 @@ func (m *model) header() string {
 		Render("SSH Scrum Poker")
 }
 
-// Renders a card
-func NewCard(option string, selected bool) string {
-	style := lg.NewStyle().
-		Padding(0, 1).
-		MarginRight(1).
-		BorderStyle(lg.RoundedBorder())
+var cardStyle = lg.NewStyle().
+	Padding(0, 1).
+	MarginRight(1).
+	BorderStyle(lg.RoundedBorder())
+
+// Renders a card to indicate vote selection
+func NewCardForSelection(option string, selected bool) string {
+	style := cardStyle.Copy()
 
 	if selected {
 		selectedColor := primaryColor
@@ -64,6 +89,20 @@ func NewCard(option string, selected bool) string {
 	return style.Render(option)
 }
 
+func NewCardForUser(vote int, visible bool) string {
+	v := strconv.Itoa(vote)
+
+	if v == "-1" {
+		return ""
+	}
+
+	if !visible {
+		return cardStyle.Render("▒")
+	}
+
+	return cardStyle.Render(v)
+}
+
 var options = []int{0, 1, 2, 3, 5, 8}
 
 // List all story point options
@@ -72,11 +111,12 @@ func (m *model) listOptions() string {
 	for _, option := range options {
 		selected := option == m.user.vote
 		o := strconv.Itoa(option)
-		cards = append(cards, NewCard(o, selected))
+		cards = append(cards, NewCardForSelection(o, selected))
 	}
 
-	s := lg.JoinHorizontal(lg.Center, cards...)
-	container := lg.NewStyle().MarginLeft(m.window.width/2 - (lg.Width(s) / 2))
+	s := lg.JoinHorizontal(lg.Top, cards...)
+	container := lg.NewStyle().
+		MarginLeft(m.window.width/2 - (lg.Width(s) / 2))
 
 	return container.Render(s)
 }

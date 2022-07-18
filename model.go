@@ -2,6 +2,7 @@ package main
 
 import (
 	"strconv"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -32,9 +33,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "0", "1", "2", "3", "5", "8":
 			{
 				v, _ := strconv.Atoi(msg.String())
-				m.user.makeVote(v)
+				if m.user.vote == v {
+					m.user.vote = -1
+				} else {
+					m.user.makeVote(v)
+				}
+
 				m.room.syncUI(m.user, noLog)
 			}
+
+		case "V":
+			return m, m.room.startCountdownToDisplayVotes
 
 		case "q", "ctrl+c", "esc":
 			return m, tea.Quit
@@ -50,16 +59,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
 	container := m.NewContainer()
 
-	s := m.header()
-	s += "\n"
-	s += m.listUsers()
+	sb := strings.Builder{}
+	sb.WriteString(m.header())
+	sb.WriteString("\n")
+	sb.WriteString(m.listUsers())
 
-	s += "\n"
-	s += m.roomInfo()
-	s += m.listOptions()
-	s += "\n\n\n\n"
+	sb.WriteString("\n")
+	sb.WriteString(m.listOptions())
+	sb.WriteString("\n\n\n\n")
 
-	s += m.showLogs()
+	sb.WriteString(m.showLogs())
 
-	return container.Render(s)
+	return container.Render(sb.String())
 }
