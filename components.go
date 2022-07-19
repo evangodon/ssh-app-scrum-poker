@@ -15,14 +15,30 @@ var (
 	surface      = lg.Color("#6c7086")
 )
 
+// Create a new style object
+func style() lg.Style {
+	return lg.NewStyle()
+}
+
+var debugMode = false
+
+func getComponentBorder() lg.Border {
+	if debugMode {
+		return lg.NormalBorder()
+	}
+
+	return lg.HiddenBorder()
+}
+
 // Container that wraps the whole app
 func (m *model) NewContainer() lg.Style {
-	return lg.NewStyle().
+	return style().
 		Margin(0, 2).
 		Padding(0, 2).
 		Height(m.window.height - 2).
 		Width(m.window.width - 5).
-		BorderStyle(lg.RoundedBorder())
+		BorderStyle(lg.RoundedBorder()).
+		BorderForeground(surface)
 }
 
 var userStyle = lg.NewStyle().Width(25).Padding(1, 0)
@@ -33,6 +49,7 @@ func (m *model) listUsers() string {
 	s += "\n"
 
 	leftCol := ""
+	middleCol := ""
 	rightCol := ""
 
 	for i, user := range m.room.users {
@@ -41,20 +58,22 @@ func (m *model) listUsers() string {
 		order := fmt.Sprintf("%d. ", i)
 		userBlock := lg.JoinHorizontal(lg.Center, order, username, card)
 
-		if i < 5 {
+		if i < 4 {
 			leftCol += userBlock
 			leftCol += "\n"
+		} else if i < 8 {
+			middleCol += userBlock
+			middleCol += "\n"
 		} else {
 			rightCol += userBlock
 			rightCol += "\n"
 		}
 	}
 
-	container := lg.NewStyle().
-		Width(m.window.width - 15).
-		MarginBottom(2)
-	gap := strings.Repeat(" ", 30)
-	s += lg.JoinHorizontal(lg.Top, leftCol, gap, rightCol)
+	container := lg.NewStyle().BorderStyle(getComponentBorder()).
+		Width(m.window.width - 15)
+	gap := strings.Repeat(" ", 10)
+	s += lg.JoinHorizontal(lg.Top, leftCol, gap, middleCol, gap, rightCol)
 
 	return container.Render(s)
 }
@@ -115,7 +134,10 @@ func (m *model) listOptions() string {
 	}
 
 	s := lg.JoinHorizontal(lg.Top, cards...)
-	container := lg.NewStyle().
+	s = lg.JoinVertical(lg.Center, "Available Options", s)
+
+	container := style().
+		BorderStyle(getComponentBorder()).
 		MarginLeft(m.window.width/2 - (lg.Width(s) / 2))
 
 	return container.Render(s)
@@ -151,5 +173,7 @@ func (m *model) showLogs() string {
 		s += "\n"
 	}
 
-	return s
+	container := style().Height(10).BorderStyle(getComponentBorder())
+
+	return container.Render(s)
 }

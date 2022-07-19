@@ -10,7 +10,7 @@ import (
 	"github.com/muesli/termenv"
 )
 
-var welcomeMsg = "Welcome to Scrum Poker 👋. Use your num keys to make a selection.\n"
+var welcomeMsg = "Welcome to Scrum Poker 👋. Use your num keys to vote.\n"
 
 func newModel(u *user, r *room) model {
 	return model{

@@ -86,6 +86,18 @@ func (r *room) startCountdownToDisplayVotes() tea.Msg {
 	return nil
 }
 
+func (r *room) resetVotes() tea.Msg {
+	r.displayVotes = false
+
+	for _, user := range r.users {
+		user.vote = -1
+	}
+
+	return roomLog{
+		log: "All votes were reset",
+	}
+}
+
 // Create a new room
 func newRoom() room {
 	// users := make(map[string]*user)
@@ -117,6 +129,30 @@ func newRoom() room {
 		{
 			id:      "id126",
 			name:    "Dustan",
+			program: nil,
+			vote:    3,
+		},
+		{
+			id:      "id193",
+			name:    "Will",
+			program: nil,
+			vote:    3,
+		},
+		{
+			id:      "id126",
+			name:    "Micheal",
+			program: nil,
+			vote:    3,
+		},
+		{
+			id:      "id1234",
+			name:    "John",
+			program: nil,
+			vote:    3,
+		},
+		{
+			id:      "id231",
+			name:    "Sara",
 			program: nil,
 			vote:    3,
 		},

@@ -45,6 +45,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "V":
 			return m, m.room.startCountdownToDisplayVotes
 
+		case "R":
+			return m, m.room.resetVotes
+
 		case "q", "ctrl+c", "esc":
 			return m, tea.Quit
 		}
@@ -61,12 +64,10 @@ func (m model) View() string {
 
 	sb := strings.Builder{}
 	sb.WriteString(m.header())
-	sb.WriteString("\n")
 	sb.WriteString(m.listUsers())
-
 	sb.WriteString("\n")
 	sb.WriteString(m.listOptions())
-	sb.WriteString("\n\n\n\n")
+	sb.WriteString("\n")
 
 	sb.WriteString(m.showLogs())
 
