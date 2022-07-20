@@ -45,7 +45,12 @@ var userStyle = lg.NewStyle().Width(25).Padding(1, 0)
 
 // List of users in room
 func (m *model) listUsers() string {
-	s := fmt.Sprintf("%d member%s in room\n", len(m.room.users), "s")
+	numUsers := len(m.room.users)
+	pluralyze := ""
+	if numUsers > 1 {
+		pluralyze = "s"
+	}
+	s := fmt.Sprintf("%d member%s in room\n", numUsers, pluralyze)
 	s += "\n"
 
 	leftCol := ""
@@ -55,7 +60,7 @@ func (m *model) listUsers() string {
 	for i, user := range m.room.users {
 		username := userStyle.Render(user.name)
 		card := NewCardForUser(user.vote, m.room.displayVotes)
-		order := fmt.Sprintf("%d. ", i)
+		order := fmt.Sprintf("%d. ", i+1)
 		userBlock := lg.JoinHorizontal(lg.Center, order, username, card)
 
 		if i < 4 {

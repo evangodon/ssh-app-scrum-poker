@@ -22,7 +22,7 @@ var noLog = roomLog{}
 // Add user to room
 func (r *room) addUser(u *user) {
 	r.users = append(r.users, u)
-	r.syncUI(anonymousUser, newRoomLog(fmt.Sprintf("→ %s joined room", u.name)))
+	r.syncUI(anonymousUser, newRoomLog(fmt.Sprintf("[→ %s joined room", u.name)))
 }
 
 // Remove user from room
@@ -33,7 +33,7 @@ func (r *room) removeUser(u user) {
 		}
 	}
 
-	r.syncUI(anonymousUser, newRoomLog(fmt.Sprintf("← %s left room", u.name)))
+	r.syncUI(anonymousUser, newRoomLog(fmt.Sprintf("←] %s left room", u.name)))
 }
 
 // Get user from room
@@ -69,6 +69,8 @@ func (r *room) startCountdownToDisplayVotes() tea.Msg {
 		r.syncUI(anonymousUser, roomLog{log: fmt.Sprintf("%d...", i)})
 	}
 
+	time.Sleep(1 * time.Second)
+
 	r.displayVotes = true
 	count := make(map[int]int)
 	for _, user := range r.users {
@@ -93,70 +95,13 @@ func (r *room) resetVotes() tea.Msg {
 		user.vote = -1
 	}
 
-	return roomLog{
-		log: "All votes were reset",
-	}
+	r.syncUI(anonymousUser, roomLog{log: "All votes were reset"})
+	return nil
 }
 
 // Create a new room
 func newRoom() room {
-	// users := make(map[string]*user)
-	users := []*user{
-		{
-			id:      "id123",
-			name:    "Joe",
-			program: nil,
-			vote:    8,
-		},
-		{
-			id:      "id124",
-			name:    "Tracy",
-			program: nil,
-			vote:    3,
-		},
-		{
-			id:      "id125",
-			name:    "Kim",
-			program: nil,
-			vote:    1,
-		},
-		{
-			id:      "id126",
-			name:    "Steve",
-			program: nil,
-			vote:    2,
-		},
-		{
-			id:      "id126",
-			name:    "Dustan",
-			program: nil,
-			vote:    3,
-		},
-		{
-			id:      "id193",
-			name:    "Will",
-			program: nil,
-			vote:    3,
-		},
-		{
-			id:      "id126",
-			name:    "Micheal",
-			program: nil,
-			vote:    3,
-		},
-		{
-			id:      "id1234",
-			name:    "John",
-			program: nil,
-			vote:    3,
-		},
-		{
-			id:      "id231",
-			name:    "Sara",
-			program: nil,
-			vote:    3,
-		},
-	}
+	users := []*user{}
 
 	return room{
 		users:        users,
