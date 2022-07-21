@@ -1,10 +1,12 @@
 
 # TODO
 
+
 - [ ] Authorization for viewing votes / reset room
+    -- [X] Add isHost field to user
     -- [ ] Only enable view votes when everybody has voted
-- [ ] Fix log viewport
-- [ ] Add keyboard shortcuts at bottom
+- [ ] Manage height of every section
+- [ ] Add background color to each user block
 
 *Short ones*
 - [ ] Sort breakdown of votes and remove counts of zero, use https://github.com/Evertras/bubble-table
@@ -29,3 +31,5 @@
 - [X] Figure out how to reconnect when connection drops on server restart
 - [-] Use bubbles/viewport for logs section *Didn't work*
 - [X] Fix countdown
+- [X] Add keyboard shortcuts at bottom
+- [X] Logs disapears on every vote

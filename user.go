@@ -12,6 +12,7 @@ type user struct {
 	name    string
 	program *tea.Program
 	vote    int
+	isHost  bool
 }
 
 func createId(s ssh.Session) string {
@@ -20,9 +21,10 @@ func createId(s ssh.Session) string {
 
 func newUser(s ssh.Session) user {
 	return user{
-		id:   createId(s),
-		name: s.User(),
-		vote: -1,
+		id:     createId(s),
+		name:   s.User(),
+		vote:   -1,
+		isHost: false,
 	}
 }
 

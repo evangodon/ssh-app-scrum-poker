@@ -43,33 +43,45 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case "V":
-			return m, m.room.startCountdownToDisplayVotes
+			if m.user.isHost {
+				return m, m.room.startCountdownToDisplayVotes
+			}
 
 		case "R":
-			return m, m.room.resetVotes
+			if m.user.isHost {
+				return m, m.room.resetVotes
+			}
 
 		case "q", "ctrl+c", "esc":
 			return m, tea.Quit
 		}
 	case roomLog:
-		m.logs = append(m.logs, msg.log)
-		return m, nil
+		if msg.log != "" {
+			m.logs = append(m.logs, msg.log)
+			return m, nil
+		}
 	}
 
 	return m, nil
 }
 
 func (m model) View() string {
-	container := m.NewContainer()
 
 	sb := strings.Builder{}
 	sb.WriteString(m.header())
 	sb.WriteString(m.listUsers())
 	sb.WriteString("\n")
 	sb.WriteString(m.listOptions())
-	sb.WriteString("\n")
+	// sb.WriteString("\n")
 
 	sb.WriteString(m.showLogs())
 
-	return container.Render(sb.String())
+	container := m.NewContainer()
+
+	s := strings.Builder{}
+	s.WriteString(container.Render(sb.String()))
+	s.WriteString("\n")
+	s.WriteString(m.showHelp())
+
+	return s.String()
 }

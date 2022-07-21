@@ -22,7 +22,8 @@ var noLog = roomLog{}
 // Add user to room
 func (r *room) addUser(u *user) {
 	r.users = append(r.users, u)
-	r.syncUI(anonymousUser, newRoomLog(fmt.Sprintf("[→ %s joined room", u.name)))
+	icon := makeGreen("[→")
+	r.syncUI(anonymousUser, newRoomLog(fmt.Sprintf("%s %s joined room", icon, u.name)))
 }
 
 // Remove user from room
@@ -33,7 +34,8 @@ func (r *room) removeUser(u user) {
 		}
 	}
 
-	r.syncUI(anonymousUser, newRoomLog(fmt.Sprintf("←] %s left room", u.name)))
+	icon := makeRed("←]")
+	r.syncUI(anonymousUser, newRoomLog(fmt.Sprintf("%s %s left room", icon, u.name)))
 }
 
 // Get user from room
@@ -95,7 +97,7 @@ func (r *room) resetVotes() tea.Msg {
 		user.vote = -1
 	}
 
-	r.syncUI(anonymousUser, roomLog{log: "All votes were reset"})
+	r.syncUI(anonymousUser, newRoomLog("All votes were reset"))
 	return nil
 }
 
