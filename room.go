@@ -63,6 +63,7 @@ func (r *room) syncUI(owner *user, log roomLog) {
 }
 
 func (r *room) startCountdownToDisplayVotes() tea.Msg {
+
 	start := 3
 	r.syncUI(anonymousUser, roomLog{log: "Revealing votes in..."})
 
@@ -79,13 +80,13 @@ func (r *room) startCountdownToDisplayVotes() tea.Msg {
 		count[user.vote]++
 	}
 
-	t := "Breakdown of votes: \n"
-	for vote, numOfVotes := range count {
-		t += fmt.Sprintf("%d: %d votes", vote, numOfVotes)
-		t += "\n"
-	}
+	log := "Breakdown of votes: \n"
+	log += r.showVotesTable()
 
-	r.syncUI(anonymousUser, roomLog{log: t})
+	r.syncUI(anonymousUser, roomLog{
+		log:         log,
+		clearBefore: true,
+	})
 
 	return nil
 }
@@ -103,7 +104,8 @@ func (r *room) resetVotes() tea.Msg {
 
 // Create a new room
 func newRoom() room {
-	users := []*user{}
+	// users := []*user{}
+	users := testusers
 
 	return room{
 		users:        users,

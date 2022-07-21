@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -44,6 +45,20 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "V":
 			if m.user.isHost {
+				notVoted := 0
+				for _, user := range m.room.users {
+					if user.vote < 0 {
+						notVoted++
+					}
+				}
+
+				if notVoted > 0 {
+					str := fmt.Sprintf("%d members have not voted yet", notVoted)
+					log := newRoomLog(str)
+
+					m.logs = append(m.logs, log.log)
+					return m, nil
+				}
 				return m, m.room.startCountdownToDisplayVotes
 			}
 
@@ -57,7 +72,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case roomLog:
 		if msg.log != "" {
-			m.logs = append(m.logs, msg.log)
+			if msg.clearBefore {
+				m.logs = make([]string, 0)
+				m.logs = append(m.logs, msg.log)
+			} else {
+				m.logs = append(m.logs, msg.log)
+			}
 			return m, nil
 		}
 	}
@@ -69,9 +89,11 @@ func (m model) View() string {
 
 	sb := strings.Builder{}
 	sb.WriteString(m.header())
+	sb.WriteString("\n")
 	sb.WriteString(m.listUsers())
 	sb.WriteString("\n")
 	sb.WriteString(m.listOptions())
+	sb.WriteString("\n")
 	// sb.WriteString("\n")
 
 	sb.WriteString(m.showLogs())
@@ -80,6 +102,7 @@ func (m model) View() string {
 
 	s := strings.Builder{}
 	s.WriteString(container.Render(sb.String()))
+
 	s.WriteString("\n")
 	s.WriteString(m.showHelp())
 

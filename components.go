@@ -6,9 +6,10 @@ import (
 	"strings"
 
 	lg "github.com/charmbracelet/lipgloss"
+	"github.com/evertras/bubble-table/table"
 )
 
-var userStyle = lg.NewStyle().Width(25).Padding(1, 0)
+var userStyle = lg.NewStyle().Width(20).Padding(1, 0).Inline(true)
 
 // List of users in room
 func (m *model) listUsers() string {
@@ -18,11 +19,13 @@ func (m *model) listUsers() string {
 		pluralyze = "s"
 	}
 	s := fmt.Sprintf("%d member%s in room\n", numUsers, pluralyze)
+	s = style().Width(m.window.width).Align(lg.Center).Render(s)
 	s += "\n"
 
-	leftCol := ""
-	middleCol := ""
-	rightCol := ""
+	col_1 := ""
+	col_2 := ""
+	col_3 := ""
+	col_4 := ""
 
 	for i, user := range m.room.users {
 		isHost := (func() string {
@@ -36,22 +39,25 @@ func (m *model) listUsers() string {
 		order := fmt.Sprintf("%d. ", i+1)
 		userBlock := lg.JoinHorizontal(lg.Center, order, username, card)
 
-		if i < 4 {
-			leftCol += userBlock
-			leftCol += "\n"
-		} else if i < 8 {
-			middleCol += userBlock
-			middleCol += "\n"
+		if i < 3 {
+			col_1 += userBlock
+			col_1 += "\n"
+		} else if i < 6 {
+			col_2 += userBlock
+			col_2 += "\n"
+		} else if i < 9 {
+			col_3 += userBlock
+			col_3 += "\n"
 		} else {
-			rightCol += userBlock
-			rightCol += "\n"
+			col_4 += userBlock
+			col_4 += "\n"
 		}
 	}
 
-	container := lg.NewStyle().BorderStyle(getComponentBorder()).
+	container := lg.NewStyle().
 		Width(m.window.width - 15)
-	gap := strings.Repeat(" ", 10)
-	s += lg.JoinHorizontal(lg.Top, leftCol, gap, middleCol, gap, rightCol)
+	gap := strings.Repeat(" ", 5)
+	s += lg.JoinHorizontal(lg.Top, col_1, gap, col_2, gap, col_3, gap, col_4)
 
 	return container.Render(s)
 }
@@ -89,11 +95,14 @@ func NewCardForUser(vote int, visible bool) string {
 	v := strconv.Itoa(vote)
 
 	if v == "-1" {
-		return ""
+		return style().
+			Inherit(cardStyle).
+			BorderStyle(lg.HiddenBorder()).
+			Render(" ")
 	}
 
 	if !visible {
-		return cardStyle.Render("▒")
+		return cardStyle.Faint(true).Render("?")
 	}
 
 	return cardStyle.Render(v)
@@ -114,8 +123,8 @@ func (m *model) listOptions() string {
 	s = lg.JoinVertical(lg.Center, "Available Options", s)
 
 	container := style().
-		BorderStyle(getComponentBorder()).
-		MarginLeft(m.window.width/2 - (lg.Width(s) / 2))
+		MarginLeft(m.window.width/2 - (lg.Width(s) / 2)).
+		MarginBottom(1)
 
 	return container.Render(s)
 }
@@ -150,9 +159,49 @@ func (m *model) showLogs() string {
 		s += "\n"
 	}
 
-	container := style().Height(10).BorderStyle(getComponentBorder())
+	container := style().Height(10)
 
 	return container.Render(s)
+}
+
+func (r *room) showVotesTable() string {
+	count := map[int]int{}
+	mostVoted := 0
+
+	for _, user := range r.users {
+		count[user.vote] += 1
+		if count[user.vote] > count[mostVoted] {
+			mostVoted = user.vote
+		}
+	}
+
+	const (
+		columnKeyStoryPoints = "story points"
+		columnKeyVotes       = "votes"
+	)
+	rows := []table.Row{}
+
+	for storyPoint, numVotes := range count {
+		style := lg.NewStyle()
+		if storyPoint == mostVoted {
+			style = style.Foreground(primaryColor)
+		}
+		rows = append(rows, table.NewRow(table.RowData{
+			columnKeyStoryPoints: storyPoint,
+			columnKeyVotes:       numVotes,
+		}).WithStyle(style))
+	}
+
+	t := table.New([]table.Column{
+		table.NewColumn(columnKeyStoryPoints, "Story Point", 15),
+		table.NewColumn(columnKeyVotes, "# Votes", 15),
+	}).WithRows(rows).
+		SortByDesc(columnKeyVotes).
+		BorderRounded().
+		SelectableRows(false).
+		WithHighlightedRow(2)
+
+	return t.View()
 }
 
 func (m *model) showHelp() string {
