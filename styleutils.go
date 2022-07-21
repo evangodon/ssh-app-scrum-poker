@@ -24,7 +24,7 @@ func makeRed(str string) string {
 	return style().Foreground(red).Render(str)
 }
 
-var debugMode = false
+var debugMode = true
 
 func getComponentBorder() lg.Border {
 	if debugMode {

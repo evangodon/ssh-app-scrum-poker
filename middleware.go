@@ -48,7 +48,8 @@ func manageRoomMembers(room *room) wish.Middleware {
 	return func(h ssh.Handler) ssh.Handler {
 		return func(s ssh.Session) {
 			user := newUser(s)
-			if len(room.users) == 0 {
+			// TODO: remove  change
+			if len(room.users) > 0 {
 				user.isHost = true
 			}
 			room.addUser(&user)

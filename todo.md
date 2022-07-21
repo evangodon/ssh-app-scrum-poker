@@ -2,20 +2,19 @@
 # TODO
 
 
-- [ ] Authorization for viewing votes / reset room
+- [X] Authorization for viewing votes / reset room
     -- [X] Add isHost field to user
-    -- [ ] Only enable view votes when everybody has voted
+    -- [X] Only enable view votes when everybody has voted
 - [ ] Manage height of every section
 - [ ] Add background color to each user block
 
 *Short ones*
-- [ ] Sort breakdown of votes and remove counts of zero, use https://github.com/Evertras/bubble-table
-- [ ] Fix the selection of an story point 
 
 
 # If there's time
 - [ ] Mouse support, see https://github.com/maaslalani/gambit/blob/main/game/game.go
 - [ ] Clean up vote type, int/string, create enum
+- [ ] Fix the selection of an story point 
 
 
 # Done
@@ -33,3 +32,4 @@
 - [X] Fix countdown
 - [X] Add keyboard shortcuts at bottom
 - [X] Logs disapears on every vote
+- [X] Sort breakdown of votes and remove counts of zero, use https://github.com/Evertras/bubble-table
