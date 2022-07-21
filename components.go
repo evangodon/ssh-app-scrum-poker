@@ -8,39 +8,6 @@ import (
 	lg "github.com/charmbracelet/lipgloss"
 )
 
-var (
-	blue         = lg.Color("#89b4fa")
-	mauve        = lg.Color("#8839ef")
-	primaryColor = lg.Color("#EBA0AC")
-	surface      = lg.Color("#6c7086")
-)
-
-// Create a new style object
-func style() lg.Style {
-	return lg.NewStyle()
-}
-
-var debugMode = false
-
-func getComponentBorder() lg.Border {
-	if debugMode {
-		return lg.NormalBorder()
-	}
-
-	return lg.HiddenBorder()
-}
-
-// Container that wraps the whole app
-func (m *model) NewContainer() lg.Style {
-	return style().
-		Margin(0, 2).
-		Padding(0, 2).
-		Height(m.window.height - 2).
-		Width(m.window.width - 5).
-		BorderStyle(lg.RoundedBorder()).
-		BorderForeground(surface)
-}
-
 var userStyle = lg.NewStyle().Width(25).Padding(1, 0)
 
 // List of users in room
@@ -58,7 +25,13 @@ func (m *model) listUsers() string {
 	rightCol := ""
 
 	for i, user := range m.room.users {
-		username := userStyle.Render(user.name)
+		isHost := (func() string {
+			if user.isHost {
+				return "(host) "
+			}
+			return ""
+		})()
+		username := userStyle.Render(fmt.Sprintf("%s %s", user.name, isHost))
 		card := NewCardForUser(user.vote, m.room.displayVotes)
 		order := fmt.Sprintf("%d. ", i+1)
 		userBlock := lg.JoinHorizontal(lg.Center, order, username, card)
@@ -106,8 +79,7 @@ func NewCardForSelection(option string, selected bool) string {
 		style = style.
 			Bold(true).
 			Foreground(selectedColor).
-			BorderForeground(selectedColor).
-			MarginBottom(1)
+			BorderForeground(selectedColor)
 	}
 
 	return style.Render(option)
@@ -138,7 +110,7 @@ func (m *model) listOptions() string {
 		cards = append(cards, NewCardForSelection(o, selected))
 	}
 
-	s := lg.JoinHorizontal(lg.Top, cards...)
+	s := lg.JoinHorizontal(lg.Center, cards...)
 	s = lg.JoinVertical(lg.Center, "Available Options", s)
 
 	container := style().
@@ -181,4 +153,16 @@ func (m *model) showLogs() string {
 	container := style().Height(10).BorderStyle(getComponentBorder())
 
 	return container.Render(s)
+}
+
+func (m *model) showHelp() string {
+	helpStyle := style().
+		Faint(true).
+		Align(lg.Center).
+		Width(m.window.width)
+	s := "[0-8]: Vote • q: quit"
+	if m.user.isHost {
+		s += " • V: reveal votes • R: reset votes"
+	}
+	return helpStyle.Render(s)
 }
