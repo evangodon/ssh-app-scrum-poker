@@ -102,7 +102,7 @@ func NewCardForUser(vote int, visible bool) string {
 	}
 
 	if !visible {
-		return cardStyle.Faint(true).Render("?")
+		return cardStyle.Copy().Faint(true).Render("?")
 	}
 
 	return cardStyle.Render(v)
