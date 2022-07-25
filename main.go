@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	host = "localhost"
-	port = 44444
+	host = "0.0.0.0"
+	port = 8080
 )
 
 func main() {
