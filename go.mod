@@ -1,4 +1,4 @@
-module charm-multiplayer-app
+module ssh-scrum-poker 
 
 go 1.18
 
