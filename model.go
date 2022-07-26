@@ -13,11 +13,20 @@ type window struct {
 	width  int
 }
 
+type sectionHeight struct {
+	app     int
+	header  int
+	users   int
+	options int
+	help    int
+}
+
 type model struct {
-	user   *user
-	room   *room
-	window window
-	logs   []string
+	user          *user
+	room          *room
+	window        window
+	sectionHeight sectionHeight
+	logs          []string
 }
 
 func (m model) Init() tea.Cmd {
@@ -86,25 +95,25 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-
-	sb := strings.Builder{}
-	sb.WriteString(m.header())
-	sb.WriteString("\n")
-	sb.WriteString(m.listUsers())
-	sb.WriteString("\n")
-	sb.WriteString(m.listOptions())
-	sb.WriteString("\n")
-	// sb.WriteString("\n")
-
-	sb.WriteString(m.showLogs())
-
 	container := m.NewContainer()
 
-	s := strings.Builder{}
-	s.WriteString(container.Render(sb.String()))
+	sections := strings.Builder{}
+	sections.WriteString(m.header())
+	sections.WriteString("\n")
+	sections.WriteString(m.listUsers())
+	sections.WriteString("\n")
+	sections.WriteString(m.listOptions())
+	sections.WriteString("\n")
 
-	s.WriteString("\n")
-	s.WriteString(m.showHelp())
+	sections.WriteString(m.showLogs())
 
-	return s.String()
+	app := container.Render(sections.String())
+
+	ui := strings.Builder{}
+	ui.WriteString(app)
+
+	ui.WriteString("\n")
+	ui.WriteString(m.showHelp())
+
+	return ui.String()
 }

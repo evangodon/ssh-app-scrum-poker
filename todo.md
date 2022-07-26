@@ -1,19 +1,11 @@
 
 # TODO
 
-- [ ] Manage height of every section
-- [ ] Add background color to each user block
-
-# Deploy
-- [ ] Create new Linode instance
-- [ ] Start python server 
-- [ ] Open port https://www.cyberciti.biz/faq/how-to-configure-ufw-to-forward-port-80443-to-internal-server-hosted-on-lan/
-- [ ] Copy folder and start go server 
+- Update logs section, add divider line
 
 *Short ones*
 - Fix bugs in vote reveal
    -- [ ] "1 members"
-   -- [ ] handle ties
 
 
 # If there's time
@@ -36,8 +28,11 @@
 - [-] Use bubbles/viewport for logs section *Didn't work*
 - [X] Fix countdown
 - [X] Add keyboard shortcuts at bottom
-- [X] Logs disapears on every vote
+- [X] Fix: Logs disapears on every vote
 - [X] Sort breakdown of votes and remove counts of zero, use https://github.com/Evertras/bubble-table
 - [X] Authorization for viewing votes / reset room
     -- [X] Add isHost field to user
     -- [X] Only enable view votes when everybody has voted
+- [X] Manage height of every section
+- [ ] Add background color to each user block *Nevermind*
+- [X] handle ties in votes table

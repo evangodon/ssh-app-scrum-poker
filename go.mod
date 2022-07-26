@@ -1,4 +1,4 @@
-module ssh-scrum-poker 
+module ssh-scrum-poker
 
 go 1.18
 
@@ -6,6 +6,7 @@ require (
 	github.com/charmbracelet/bubbletea v0.22.0
 	github.com/charmbracelet/lipgloss v0.5.0
 	github.com/charmbracelet/wish v0.5.0
+	github.com/evertras/bubble-table v0.14.5
 	github.com/gliderlabs/ssh v0.3.4
 	github.com/muesli/termenv v0.11.1-0.20220212125758-44cd13922739
 )
@@ -17,7 +18,6 @@ require (
 	github.com/charmbracelet/bubbles v0.11.0 // indirect
 	github.com/charmbracelet/keygen v0.3.0 // indirect
 	github.com/containerd/console v1.0.3 // indirect
-	github.com/evertras/bubble-table v0.14.5 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect

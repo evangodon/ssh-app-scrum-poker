@@ -10,13 +10,13 @@ import (
 	"github.com/muesli/termenv"
 )
 
-var welcomeMsg = "Welcome to Scrum Poker 👋. Use your num keys to vote.\n"
+var welcomeMsg = newRoomLog("Welcome to SSH Scrum Poker 👋. Use your num keys to vote.\n")
 
 func newModel(u *user, r *room) model {
 	return model{
 		user: u,
 		room: r,
-		logs: []string{welcomeMsg},
+		logs: []string{welcomeMsg.log},
 	}
 }
 
@@ -48,8 +48,7 @@ func manageRoomMembers(room *room) wish.Middleware {
 	return func(h ssh.Handler) ssh.Handler {
 		return func(s ssh.Session) {
 			user := newUser(s)
-			// TODO: remove  change
-			if len(room.users) > 0 {
+			if len(room.users) == 0 {
 				user.isHost = true
 			}
 			room.addUser(&user)

@@ -13,7 +13,7 @@ type room struct {
 	displayVotes bool
 }
 
-var anonymousUser = &user{
+var noOwner = &user{
 	id: "admin",
 }
 
@@ -23,7 +23,7 @@ var noLog = roomLog{}
 func (r *room) addUser(u *user) {
 	r.users = append(r.users, u)
 	icon := makeGreen("[→")
-	r.syncUI(anonymousUser, newRoomLog(fmt.Sprintf("%s %s joined room", icon, u.name)))
+	r.syncUI(noOwner, newRoomLog(fmt.Sprintf("%s %s joined room", icon, u.name)))
 }
 
 // Remove user from room
@@ -35,7 +35,7 @@ func (r *room) removeUser(u user) {
 	}
 
 	icon := makeRed("←]")
-	r.syncUI(anonymousUser, newRoomLog(fmt.Sprintf("%s %s left room", icon, u.name)))
+	r.syncUI(noOwner, newRoomLog(fmt.Sprintf("%s %s left room", icon, u.name)))
 }
 
 // Get user from room
@@ -52,6 +52,19 @@ func (r *room) getUser(s ssh.Session) *user {
 	return user
 }
 
+// Calculate how many users votes
+func (r *room) getNumberOfVotes() int {
+	votes := 0
+
+	for _, user := range r.users {
+		if user.vote >= 0 {
+			votes++
+		}
+	}
+
+	return votes
+}
+
 // Sync everybody's UI. Don't call program.Send on the user who triggered
 // the sync since it will block their update method.
 func (r *room) syncUI(owner *user, log roomLog) {
@@ -65,11 +78,11 @@ func (r *room) syncUI(owner *user, log roomLog) {
 func (r *room) startCountdownToDisplayVotes() tea.Msg {
 
 	start := 3
-	r.syncUI(anonymousUser, roomLog{log: "Revealing votes in..."})
+	r.syncUI(noOwner, roomLog{log: "Revealing votes in..."})
 
 	for i := start; i > 0; i-- {
 		time.Sleep(1 * time.Second)
-		r.syncUI(anonymousUser, roomLog{log: fmt.Sprintf("%d...", i)})
+		r.syncUI(noOwner, roomLog{log: fmt.Sprintf("%d...", i)})
 	}
 
 	time.Sleep(1 * time.Second)
@@ -83,7 +96,7 @@ func (r *room) startCountdownToDisplayVotes() tea.Msg {
 	log := "Breakdown of votes: \n"
 	log += r.showVotesTable()
 
-	r.syncUI(anonymousUser, roomLog{
+	r.syncUI(noOwner, roomLog{
 		log:         log,
 		clearBefore: true,
 	})
@@ -98,14 +111,14 @@ func (r *room) resetVotes() tea.Msg {
 		user.vote = -1
 	}
 
-	r.syncUI(anonymousUser, newRoomLog("All votes were reset"))
+	r.syncUI(noOwner, newRoomLog("All votes were reset"))
 	return nil
 }
 
 // Create a new room
 func newRoom() room {
-	// users := []*user{}
-	users := testusers
+	users := []*user{}
+	// users := testusers
 
 	return room{
 		users:        users,

@@ -18,8 +18,12 @@ func (m *model) listUsers() string {
 	if numUsers > 1 {
 		pluralyze = "s"
 	}
-	s := fmt.Sprintf("%d member%s in room\n", numUsers, pluralyze)
-	s = style().Width(m.window.width).Align(lg.Center).Render(s)
+	s := fmt.Sprintf(
+		"%d member%s in room • %d members voted \n",
+		numUsers,
+		pluralyze,
+		m.room.getNumberOfVotes(),
+	)
 	s += "\n"
 
 	col_1 := ""
@@ -59,16 +63,23 @@ func (m *model) listUsers() string {
 	gap := strings.Repeat(" ", 5)
 	s += lg.JoinHorizontal(lg.Top, col_1, gap, col_2, gap, col_3, gap, col_4)
 
-	return container.Render(s)
+	str := container.Render(s)
+	m.sectionHeight.users = lg.Height(str)
+
+	return str
 }
 
 // Styling for app header
 func (m *model) header() string {
-	return lg.NewStyle().
+	str := lg.NewStyle().
 		Bold(true).
 		Foreground(blue).
 		MarginBottom(1).
 		Render("SSH Scrum Poker")
+
+	m.sectionHeight.header = lg.Height(str)
+
+	return str
 }
 
 var cardStyle = lg.NewStyle().
@@ -124,9 +135,12 @@ func (m *model) listOptions() string {
 
 	container := style().
 		MarginLeft(m.window.width/2 - (lg.Width(s) / 2)).
-		MarginBottom(1)
+		MarginBottom(4)
 
-	return container.Render(s)
+	str := container.Render(s)
+	m.sectionHeight.options = lg.Height(str)
+
+	return str
 }
 
 func (m *model) roomInfo() string {
@@ -159,19 +173,20 @@ func (m *model) showLogs() string {
 		s += "\n"
 	}
 
-	container := style().Height(10)
+	height := m.window.height - m.sectionHeight.header - m.sectionHeight.users - m.sectionHeight.options - m.sectionHeight.help - 10
+	container := style().Height(height)
 
 	return container.Render(s)
 }
 
 func (r *room) showVotesTable() string {
 	count := map[int]int{}
-	mostVoted := 0
+	highestAmountOfVotes := 0
 
 	for _, user := range r.users {
 		count[user.vote] += 1
-		if count[user.vote] > count[mostVoted] {
-			mostVoted = user.vote
+		if count[user.vote] > highestAmountOfVotes {
+			highestAmountOfVotes = count[user.vote]
 		}
 	}
 
@@ -183,7 +198,7 @@ func (r *room) showVotesTable() string {
 
 	for storyPoint, numVotes := range count {
 		style := lg.NewStyle()
-		if storyPoint == mostVoted {
+		if numVotes == highestAmountOfVotes {
 			style = style.Foreground(primaryColor)
 		}
 		rows = append(rows, table.NewRow(table.RowData{
@@ -193,7 +208,7 @@ func (r *room) showVotesTable() string {
 	}
 
 	t := table.New([]table.Column{
-		table.NewColumn(columnKeyStoryPoints, "Story Point", 15),
+		table.NewColumn(columnKeyStoryPoints, "Story Points", 15),
 		table.NewColumn(columnKeyVotes, "# Votes", 15),
 	}).WithRows(rows).
 		SortByDesc(columnKeyVotes).
@@ -213,5 +228,9 @@ func (m *model) showHelp() string {
 	if m.user.isHost {
 		s += " • V: reveal votes • R: reset votes"
 	}
-	return helpStyle.Render(s)
+	str := helpStyle.Render(s)
+
+	m.sectionHeight.help = lg.Height(str)
+
+	return str
 }

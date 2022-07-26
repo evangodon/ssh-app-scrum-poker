@@ -10,9 +10,13 @@ type roomLog struct {
 	clearBefore bool
 }
 
+func faint(s string) string {
+	return style().Faint(true).Render(s)
+}
+
 func newRoomLog(msg string) roomLog {
-	ts := time.Now().Format("3:01")
-	log := fmt.Sprintf("[%s] %s", ts, msg)
+	ts := fmt.Sprintf("[%s]", time.Now().Format("3:01"))
+	log := fmt.Sprintf("%s %s", faint(ts), msg)
 
 	return roomLog{
 		log:         log,
