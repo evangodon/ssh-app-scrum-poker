@@ -2,6 +2,7 @@
 # TODO
 
 - Update logs section, add divider line
+- Fix log height
 
 *Short ones*
 - Fix bugs in vote reveal

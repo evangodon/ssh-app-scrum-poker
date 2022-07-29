@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	tea "github.com/charmbracelet/bubbletea"
+	lg "github.com/charmbracelet/lipgloss"
 	"github.com/gliderlabs/ssh"
 )
 
@@ -13,6 +14,7 @@ type user struct {
 	program *tea.Program
 	vote    int
 	isHost  bool
+	color   lg.Color
 }
 
 func createId(s ssh.Session) string {

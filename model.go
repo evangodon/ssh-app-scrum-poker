@@ -101,7 +101,7 @@ func (m model) View() string {
 	sections.WriteString(m.header())
 	sections.WriteString("\n")
 	sections.WriteString(m.listUsers())
-	sections.WriteString("\n")
+	sections.WriteString("\n\n")
 	sections.WriteString(m.listOptions())
 	sections.WriteString("\n")
 

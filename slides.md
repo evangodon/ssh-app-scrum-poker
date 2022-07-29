@@ -68,6 +68,6 @@ Libraries I used:
 
 ---
 
-## Thank you
+## Thanks
 
-slides built with `github.com/maaslalani/slides`
+- slides built with `github.com/maaslalani/slides`

@@ -37,10 +37,8 @@ func getComponentBorder() lg.Border {
 // Container that wraps the whole app
 func (m *model) NewContainer() lg.Style {
 	return style().
-		Margin(0, 2).
+		Margin(1, 2, 0, 2).
 		Padding(0, 2).
 		Height(m.window.height - 3).
-		Width(m.window.width - 4).
-		BorderStyle(lg.RoundedBorder()).
-		BorderForeground(surface)
+		Width(m.window.width - 4)
 }

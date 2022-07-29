@@ -9,7 +9,7 @@ import (
 	"github.com/evertras/bubble-table/table"
 )
 
-var userStyle = lg.NewStyle().Width(20).Padding(1, 0).Inline(true)
+var userStyle = lg.NewStyle().Width(12).Padding(1, 0).Inline(true)
 
 // List of users in room
 func (m *model) listUsers() string {
@@ -40,8 +40,9 @@ func (m *model) listUsers() string {
 		})()
 		username := userStyle.Render(fmt.Sprintf("%s %s", user.name, isHost))
 		card := NewCardForUser(user.vote, m.room.displayVotes)
-		order := fmt.Sprintf("%d. ", i+1)
-		userBlock := lg.JoinHorizontal(lg.Center, order, username, card)
+		userOrder := fmt.Sprintf("%d. ", i+1)
+		userColor := style().Foreground(user.color).Render("● ")
+		userBlock := lg.JoinHorizontal(lg.Center, userOrder, userColor, username, card)
 
 		if i < 3 {
 			col_1 += userBlock
@@ -60,7 +61,7 @@ func (m *model) listUsers() string {
 
 	container := lg.NewStyle().
 		Width(m.window.width - 15)
-	gap := strings.Repeat(" ", 5)
+	gap := strings.Repeat(" ", 10)
 	s += lg.JoinHorizontal(lg.Top, col_1, gap, col_2, gap, col_3, gap, col_4)
 
 	str := container.Render(s)
@@ -149,10 +150,6 @@ func (m *model) roomInfo() string {
 	return lg.NewStyle().Render(s)
 }
 
-const (
-	logLimit = 6
-)
-
 func titleStyle() lg.Style {
 	return lg.NewStyle().Background(surface).Padding(0, 1)
 }
@@ -162,8 +159,8 @@ func (m *model) showLogs() string {
 	viewableLogs := m.logs
 	numLogs := len(viewableLogs)
 
-	if numLogs > logLimit {
-		viewableLogs = m.logs[(numLogs - logLimit):numLogs]
+	if numLogs > 6 {
+		viewableLogs = m.logs[(numLogs - 6):numLogs]
 	}
 
 	s := titleStyle().Render("LOGS")

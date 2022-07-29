@@ -5,11 +5,13 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	lg "github.com/charmbracelet/lipgloss"
 	"github.com/gliderlabs/ssh"
 )
 
 type room struct {
 	users        []*user
+	colors       []lg.Color
 	displayVotes bool
 }
 
@@ -21,7 +23,9 @@ var noLog = roomLog{}
 
 // Add user to room
 func (r *room) addUser(u *user) {
+	u.color = r.GetUserColor()
 	r.users = append(r.users, u)
+
 	icon := makeGreen("[→")
 	r.syncUI(noOwner, newRoomLog(fmt.Sprintf("%s %s joined room", icon, u.name)))
 }
@@ -33,9 +37,28 @@ func (r *room) removeUser(u user) {
 			r.users = append(r.users[:i], r.users[i+1:]...)
 		}
 	}
+	r.makeUserColorAvailable(u.color)
 
 	icon := makeRed("←]")
 	r.syncUI(noOwner, newRoomLog(fmt.Sprintf("%s %s left room", icon, u.name)))
+}
+
+func (r *room) GetUserColor() lg.Color {
+
+	if len(r.colors) == 0 {
+		println("hello")
+		return lg.Color("#bac2de")
+	}
+
+	selected, rest := r.colors[len(r.colors)-1], r.colors[:len(r.colors)-1]
+	r.colors = rest
+	println(len(r.colors))
+
+	return selected
+}
+
+func (r *room) makeUserColorAvailable(color lg.Color) {
+	r.colors = append(r.colors, color)
 }
 
 // Get user from room
@@ -117,11 +140,23 @@ func (r *room) resetVotes() tea.Msg {
 
 // Create a new room
 func newRoom() room {
-	users := []*user{}
-	// users := testusers
+	// users := []*user{}
+	users := testusers
 
 	return room{
-		users:        users,
+		users: users,
+		colors: []lg.Color{
+			lg.Color("#f5c2e7"),
+			lg.Color("#cba6f7"),
+			lg.Color("#f38ba8"),
+			lg.Color("#eba0ac"),
+			lg.Color("#fab387"),
+			lg.Color("#f9e2af"),
+			lg.Color("#a6e3a1"),
+			lg.Color("#94e2d5"),
+			lg.Color("#74c7ec"),
+			lg.Color("#b4befe"),
+		},
 		displayVotes: false,
 	}
 }
