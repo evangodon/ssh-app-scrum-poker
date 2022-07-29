@@ -32,17 +32,12 @@ func (m *model) listUsers() string {
 	col_4 := ""
 
 	for i, user := range m.room.users {
-		isHost := (func() string {
-			if user.isHost {
-				return "(host) "
-			}
-			return ""
-		})()
-		username := userStyle.Render(fmt.Sprintf("%s %s", user.name, isHost))
+		if user.id == m.user.id {
+			continue
+		}
 		card := NewCardForUser(user.vote, m.room.displayVotes)
-		userOrder := fmt.Sprintf("%d. ", i+1)
-		userColor := style().Foreground(user.color).Render("● ")
-		userBlock := lg.JoinHorizontal(lg.Center, userOrder, userColor, username, card)
+		userLine := newUserLine(user)
+		userBlock := lg.JoinHorizontal(lg.Center, userLine, card)
 
 		if i < 3 {
 			col_1 += userBlock
@@ -60,7 +55,10 @@ func (m *model) listUsers() string {
 	}
 
 	container := lg.NewStyle().
-		Width(m.window.width - 15)
+		Border(lg.RoundedBorder()).
+		BorderForeground(surface).
+		Padding(0, 2).
+		Width(m.window.width - 12)
 	gap := strings.Repeat(" ", 10)
 	s += lg.JoinHorizontal(lg.Top, col_1, gap, col_2, gap, col_3, gap, col_4)
 
@@ -68,6 +66,20 @@ func (m *model) listUsers() string {
 	m.sectionHeight.users = lg.Height(str)
 
 	return str
+}
+
+func newUserLine(u *user) string {
+	isHost := (func() string {
+		if u.isHost {
+			return "(host) "
+		}
+		return ""
+	})()
+	username := userStyle.Render(fmt.Sprintf("%s %s", u.name, isHost))
+	userColor := style().Foreground(u.color).Render("● ")
+
+	return fmt.Sprintf("%s %s", userColor, username)
+
 }
 
 // Styling for app header
@@ -131,12 +143,17 @@ func (m *model) listOptions() string {
 		cards = append(cards, NewCardForSelection(o, selected))
 	}
 
-	s := lg.JoinHorizontal(lg.Center, cards...)
-	s = lg.JoinVertical(lg.Center, "Available Options", s)
+	cardBlock := lg.JoinHorizontal(lg.Center, cards...)
+
+	userLine := newUserLine(m.user)
+	gap := strings.Repeat(" ", 8)
+	s := lg.JoinHorizontal(lg.Center, userLine, gap, cardBlock)
 
 	container := style().
-		MarginLeft(m.window.width/2 - (lg.Width(s) / 2)).
-		MarginBottom(4)
+		Border(lg.RoundedBorder()).
+		BorderForeground(surface).
+		Padding(0, 2)
+		// MarginBottom(1)
 
 	str := container.Render(s)
 	m.sectionHeight.options = lg.Height(str)

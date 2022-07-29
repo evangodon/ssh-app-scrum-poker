@@ -1,8 +1,10 @@
 
 # TODO
 
+- [ ] user circle for story points in vote table
+- [ ] trim username if too long 
 - Update logs section, add divider line
-- Fix log height
+- [ ] Fix log height
 
 *Short ones*
 - Fix bugs in vote reveal

@@ -40,6 +40,23 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.window.width = msg.Width
 	case tea.KeyMsg:
 		switch msg.String() {
+		case "h", "j", "k", "l", ";", "'":
+			{
+				v := map[string]int{
+					"h": 0,
+					"j": 1,
+					"k": 2,
+					"l": 3,
+					";": 5,
+					"'": 8,
+				}[msg.String()]
+
+				if m.user.vote == v {
+					m.user.vote = -1
+				} else {
+					m.user.makeVote(v)
+				}
+			}
 		case "0", "1", "2", "3", "5", "8":
 			{
 				v, _ := strconv.Atoi(msg.String())
@@ -100,10 +117,10 @@ func (m model) View() string {
 	sections := strings.Builder{}
 	sections.WriteString(m.header())
 	sections.WriteString("\n")
-	sections.WriteString(m.listUsers())
-	sections.WriteString("\n\n")
 	sections.WriteString(m.listOptions())
 	sections.WriteString("\n")
+	sections.WriteString(m.listUsers())
+	sections.WriteString("\n\n\n")
 
 	sections.WriteString(m.showLogs())
 
