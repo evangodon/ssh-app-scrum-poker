@@ -57,6 +57,7 @@ func (m *model) listUsers() string {
 	container := lg.NewStyle().
 		Border(lg.RoundedBorder()).
 		BorderForeground(surface).
+		Margin(0, appSideMargin).
 		Padding(0, 2).
 		Width(m.window.width - 12)
 	gap := strings.Repeat(" ", 10)
@@ -87,7 +88,7 @@ func (m *model) header() string {
 	str := lg.NewStyle().
 		Bold(true).
 		Foreground(blue).
-		MarginBottom(1).
+		Margin(0, appSideMargin, 1, appSideMargin).
 		Render("SSH Scrum Poker")
 
 	m.sectionHeight.header = lg.Height(str)
@@ -152,8 +153,8 @@ func (m *model) listOptions() string {
 	container := style().
 		Border(lg.RoundedBorder()).
 		BorderForeground(surface).
-		Padding(0, 2)
-		// MarginBottom(1)
+		Padding(0, 2).
+		Margin(0, appSideMargin)
 
 	str := container.Render(s)
 	m.sectionHeight.options = lg.Height(str)
@@ -167,30 +168,41 @@ func (m *model) roomInfo() string {
 	return lg.NewStyle().Render(s)
 }
 
-func titleStyle() lg.Style {
-	return lg.NewStyle().Background(surface).Padding(0, 1)
-}
-
 // Render a list of logs
 func (m *model) showLogs() string {
-	viewableLogs := m.logs
-	numLogs := len(viewableLogs)
+	displayedLogs := m.logs
+	numDisplayedLogs := len(displayedLogs)
 
-	if numLogs > 6 {
-		viewableLogs = m.logs[(numLogs - 6):numLogs]
+	height := m.window.height -
+		m.sectionHeight.header -
+		m.sectionHeight.users -
+		m.sectionHeight.options -
+		m.sectionHeight.help
+	logSectionHeight := Abs(height - 5)
+	container := style().Height(logSectionHeight)
+
+	maxAvailableLines := Abs(logSectionHeight - 4)
+
+	if numDisplayedLogs > maxAvailableLines {
+		displayedLogs = displayedLogs[(numDisplayedLogs - maxAvailableLines):numDisplayedLogs]
 	}
 
-	s := titleStyle().Render("LOGS")
-	s += "\n\n"
-	for _, log := range viewableLogs {
-		s += log
-		s += "\n"
+	left := "── Logs "
+	lineRepeated := func() int {
+		if m.window.width > len(left) {
+			return m.window.width - len(left)
+		}
+		return m.window.width
+	}()
+	right := strings.Repeat("─", lineRepeated)
+	s := strings.Builder{}
+	s.WriteString(fmt.Sprintf("%s%s\n\n", left, right))
+
+	for _, log := range displayedLogs {
+		s.WriteString(fmt.Sprintf("  %s \n", log))
 	}
 
-	height := m.window.height - m.sectionHeight.header - m.sectionHeight.users - m.sectionHeight.options - m.sectionHeight.help - 10
-	container := style().Height(height)
-
-	return container.Render(s)
+	return container.Render(s.String())
 }
 
 func (r *room) showVotesTable() string {

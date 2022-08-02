@@ -99,9 +99,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case roomLog:
 		if msg.log != "" {
 			if msg.clearBefore {
+				println(" clearing")
 				m.logs = make([]string, 0)
 				m.logs = append(m.logs, msg.log)
 			} else {
+				println("not clearing")
 				m.logs = append(m.logs, msg.log)
 			}
 			return m, nil
@@ -123,6 +125,7 @@ func (m model) View() string {
 	sections.WriteString("\n\n\n")
 
 	sections.WriteString(m.showLogs())
+	sections.WriteString("\n")
 
 	app := container.Render(sections.String())
 

@@ -11,6 +11,10 @@ var (
 	red          = lg.Color("#f38ba8")
 )
 
+var (
+	appSideMargin = 2
+)
+
 // Create a new style object
 func style() lg.Style {
 	return lg.NewStyle()
@@ -37,8 +41,13 @@ func getComponentBorder() lg.Border {
 // Container that wraps the whole app
 func (m *model) NewContainer() lg.Style {
 	return style().
-		Margin(1, 2, 0, 2).
-		Padding(0, 2).
-		Height(m.window.height - 3).
-		Width(m.window.width - 4)
+		Height(m.window.height - 4).
+		Width(m.window.width)
+}
+
+func Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }
