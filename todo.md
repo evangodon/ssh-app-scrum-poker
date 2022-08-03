@@ -1,18 +1,9 @@
 
 # TODO
 
-- [ ] user circle for story points in vote table
-- [ ] trim username if too long 
-- Update logs section, add divider line
-- [ ] Fix log height
-
-*Short ones*
-- Fix bugs in vote reveal
-   -- [ ] "1 members"
 
 
-# If there's time
-- [ ] Mouse support, see https://github.com/maaslalani/gambit/blob/main/game/game.go
+- [ ] Mouse support, see https://github.com/maaslalani/gambit/blob/main/game/game.go *Didn't work*
 - [ ] Clean up vote type, int/string, create enum
 - [ ] Fix the selection of an story point 
 
@@ -39,3 +30,6 @@
 - [X] Manage height of every section
 - [ ] Add background color to each user block *Nevermind*
 - [X] handle ties in votes table
+- [X] user circle for story points in vote table
+- [X] trim username if too long 
+- [X] Update logs section, add divider line

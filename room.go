@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	lg "github.com/charmbracelet/lipgloss"
+	"github.com/evertras/bubble-table/table"
 	"github.com/gliderlabs/ssh"
 )
 
@@ -46,13 +48,11 @@ func (r *room) removeUser(u user) {
 func (r *room) GetUserColor() lg.Color {
 
 	if len(r.colors) == 0 {
-		println("hello")
 		return lg.Color("#bac2de")
 	}
 
 	selected, rest := r.colors[len(r.colors)-1], r.colors[:len(r.colors)-1]
 	r.colors = rest
-	println(len(r.colors))
 
 	return selected
 }
@@ -117,7 +117,7 @@ func (r *room) startCountdownToDisplayVotes() tea.Msg {
 	}
 
 	log := "Breakdown of votes: \n"
-	log += r.showVotesTable()
+	log += style().MarginLeft(2).Render(r.showVotesTable())
 
 	r.syncUI(noOwner, roomLog{
 		log:         log,
@@ -125,6 +125,49 @@ func (r *room) startCountdownToDisplayVotes() tea.Msg {
 	})
 
 	return nil
+}
+
+func (r *room) showVotesTable() string {
+	count := map[int]int{}
+	highestAmountOfVotes := 0
+
+	for _, user := range r.users {
+		count[user.vote] += 1
+		if count[user.vote] > highestAmountOfVotes {
+			highestAmountOfVotes = count[user.vote]
+		}
+	}
+
+	const (
+		columnKeyStoryPoints = "story points"
+		columnKeyVotes       = "votes"
+	)
+	rows := []table.Row{}
+
+	for storyPoint, votesCount := range count {
+		style := lg.NewStyle()
+		if votesCount == highestAmountOfVotes {
+			style = style.Foreground(primaryColor)
+		}
+
+		voteCircles := strings.Repeat("● ", votesCount)
+
+		rows = append(rows, table.NewRow(table.RowData{
+			columnKeyStoryPoints: storyPoint,
+			columnKeyVotes:       voteCircles,
+		}).WithStyle(style))
+	}
+
+	t := table.New([]table.Column{
+		table.NewColumn(columnKeyStoryPoints, "Story Points", 15),
+		table.NewColumn(columnKeyVotes, "# Votes", 25),
+	}).WithRows(rows).
+		SortByDesc(columnKeyVotes).
+		BorderRounded().
+		SelectableRows(false).
+		WithHighlightedRow(2)
+
+	return t.View()
 }
 
 func (r *room) resetVotes() tea.Msg {

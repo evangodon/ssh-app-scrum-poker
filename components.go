@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	lg "github.com/charmbracelet/lipgloss"
-	"github.com/evertras/bubble-table/table"
 )
 
 var userStyle = lg.NewStyle().Width(12).Padding(1, 0).Inline(true)
@@ -14,14 +13,11 @@ var userStyle = lg.NewStyle().Width(12).Padding(1, 0).Inline(true)
 // List of users in room
 func (m *model) listUsers() string {
 	numUsers := len(m.room.users)
-	pluralyze := ""
-	if numUsers > 1 {
-		pluralyze = "s"
-	}
+	members := pluralize("member", "members", m.room.getNumberOfVotes())
 	s := fmt.Sprintf(
-		"%d member%s in room • %d members voted \n",
+		"%d %s in room • %d voted \n",
 		numUsers,
-		pluralyze,
+		members,
 		m.room.getNumberOfVotes(),
 	)
 	s += "\n"
@@ -52,6 +48,10 @@ func (m *model) listUsers() string {
 			col_4 += userBlock
 			col_4 += "\n"
 		}
+	}
+
+	if len(m.room.users) == 1 {
+		col_1 = style().Faint(true).Italic(true).Render("Nobody else is in the room")
 	}
 
 	container := lg.NewStyle().
@@ -181,7 +181,7 @@ func (m *model) showLogs() string {
 	logSectionHeight := Abs(height - 5)
 	container := style().Height(logSectionHeight)
 
-	maxAvailableLines := Abs(logSectionHeight - 4)
+	maxAvailableLines := Abs(logSectionHeight - 2)
 
 	if numDisplayedLogs > maxAvailableLines {
 		displayedLogs = displayedLogs[(numDisplayedLogs - maxAvailableLines):numDisplayedLogs]
@@ -203,46 +203,6 @@ func (m *model) showLogs() string {
 	}
 
 	return container.Render(s.String())
-}
-
-func (r *room) showVotesTable() string {
-	count := map[int]int{}
-	highestAmountOfVotes := 0
-
-	for _, user := range r.users {
-		count[user.vote] += 1
-		if count[user.vote] > highestAmountOfVotes {
-			highestAmountOfVotes = count[user.vote]
-		}
-	}
-
-	const (
-		columnKeyStoryPoints = "story points"
-		columnKeyVotes       = "votes"
-	)
-	rows := []table.Row{}
-
-	for storyPoint, numVotes := range count {
-		style := lg.NewStyle()
-		if numVotes == highestAmountOfVotes {
-			style = style.Foreground(primaryColor)
-		}
-		rows = append(rows, table.NewRow(table.RowData{
-			columnKeyStoryPoints: storyPoint,
-			columnKeyVotes:       numVotes,
-		}).WithStyle(style))
-	}
-
-	t := table.New([]table.Column{
-		table.NewColumn(columnKeyStoryPoints, "Story Points", 15),
-		table.NewColumn(columnKeyVotes, "# Votes", 15),
-	}).WithRows(rows).
-		SortByDesc(columnKeyVotes).
-		BorderRounded().
-		SelectableRows(false).
-		WithHighlightedRow(2)
-
-	return t.View()
 }
 
 func (m *model) showHelp() string {

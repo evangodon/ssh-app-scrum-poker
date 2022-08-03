@@ -79,7 +79,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 
 				if notVoted > 0 {
-					str := fmt.Sprintf("%d members have not voted yet", notVoted)
+					members := pluralize("member has", "members have", notVoted)
+					str := fmt.Sprintf("%d %s not voted yet", notVoted, members)
 					log := newRoomLog(str)
 
 					m.logs = append(m.logs, log.log)
@@ -122,7 +123,7 @@ func (m model) View() string {
 	sections.WriteString(m.listOptions())
 	sections.WriteString("\n")
 	sections.WriteString(m.listUsers())
-	sections.WriteString("\n\n\n")
+	sections.WriteString("\n\n")
 
 	sections.WriteString(m.showLogs())
 	sections.WriteString("\n")

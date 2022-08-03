@@ -49,9 +49,9 @@ Libraries I used:
 
 ---
 
-# The process I went through 
-
-## Is this even possible? 
+# The process of building it
+ 
+## Verify this was even possible 
 - No official support for multi-users apps 
 - Ensure every user has their own UI 
 - Challenges with syncing UI
@@ -61,13 +61,14 @@ Libraries I used:
   - user
 
 ## Build the UI
+  - One long string
   - All dimensions are hard-coded
   - No flex-box for layout 
   - Scrollable logs
-- Deploy the server somewhere
+
+## Deploy the server somewhere
 
 ---
 
 ## Thanks
 
-- slides built with `github.com/maaslalani/slides`

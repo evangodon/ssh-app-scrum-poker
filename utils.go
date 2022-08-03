@@ -51,3 +51,10 @@ func Abs(x int) int {
 	}
 	return x
 }
+
+func pluralize(singular string, plural string, count int) string {
+	if count > 1 {
+		return plural
+	}
+	return singular
+}
