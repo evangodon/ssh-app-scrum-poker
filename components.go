@@ -31,7 +31,7 @@ func (m *model) listUsers() string {
 		if user.id == m.user.id {
 			continue
 		}
-		card := NewCardForUser(user.vote, m.room.displayVotes)
+		card := NewCardForUser(user, m.room.displayVotes)
 		userLine := newUserLine(user)
 		userBlock := lg.JoinHorizontal(lg.Center, userLine, card)
 
@@ -102,22 +102,23 @@ var cardStyle = lg.NewStyle().
 	BorderStyle(lg.RoundedBorder())
 
 // Renders a card to indicate vote selection
-func NewCardForSelection(option string, selected bool) string {
+func NewCardForSelection(option string, selected bool, user *user) string {
 	style := cardStyle.Copy()
 
 	if selected {
-		selectedColor := primaryColor
+		selectedColor := user.color
 		style = style.
 			Bold(true).
 			Foreground(selectedColor).
-			BorderForeground(selectedColor)
+			BorderForeground(selectedColor).
+			BorderStyle(lg.DoubleBorder())
 	}
 
 	return style.Render(option)
 }
 
-func NewCardForUser(vote int, visible bool) string {
-	v := strconv.Itoa(vote)
+func NewCardForUser(user *user, visible bool) string {
+	v := strconv.Itoa(user.vote)
 
 	if v == "-1" {
 		return style().
@@ -126,11 +127,13 @@ func NewCardForUser(vote int, visible bool) string {
 			Render(" ")
 	}
 
+	userCardStyle := cardStyle.Copy().BorderForeground(user.color).Foreground(user.color)
+
 	if !visible {
-		return cardStyle.Copy().Faint(true).Render("?")
+		return userCardStyle.Faint(true).Render("?")
 	}
 
-	return cardStyle.Render(v)
+	return userCardStyle.Render(v)
 }
 
 var options = []int{0, 1, 2, 3, 5, 8}
@@ -141,7 +144,7 @@ func (m *model) listOptions() string {
 	for _, option := range options {
 		selected := option == m.user.vote
 		o := strconv.Itoa(option)
-		cards = append(cards, NewCardForSelection(o, selected))
+		cards = append(cards, NewCardForSelection(o, selected, m.user))
 	}
 
 	cardBlock := lg.JoinHorizontal(lg.Center, cards...)
