@@ -88,8 +88,7 @@ func (r *room) getNumberOfVotes() int {
 	return votes
 }
 
-// Sync everybody's UI. Don't call program.Send on the user who triggered
-// the sync since it will block their update method.
+// Sync everybody's UI.
 func (r *room) syncUI(owner *user, log roomLog) {
 	for _, user := range r.users {
 		if user.program != nil && owner.id != user.id {

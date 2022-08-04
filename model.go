@@ -104,7 +104,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.logs = make([]string, 0)
 				m.logs = append(m.logs, msg.log)
 			} else {
-				println("not clearing")
 				m.logs = append(m.logs, msg.log)
 			}
 			return m, nil
