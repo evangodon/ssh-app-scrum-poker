@@ -15,7 +15,7 @@ func faint(s string) string {
 }
 
 func newRoomLog(msg string) roomLog {
-	ts := fmt.Sprintf("[%s]", time.Now().Format("3:01"))
+	ts := fmt.Sprintf("[%s]", time.Now().Format(time.Kitchen))
 	log := fmt.Sprintf("%s %s", faint(ts), msg)
 
 	return roomLog{

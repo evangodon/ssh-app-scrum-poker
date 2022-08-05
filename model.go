@@ -100,7 +100,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case roomLog:
 		if msg.log != "" {
 			if msg.clearBefore {
-				println(" clearing")
 				m.logs = make([]string, 0)
 				m.logs = append(m.logs, msg.log)
 			} else {
