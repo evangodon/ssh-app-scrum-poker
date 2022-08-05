@@ -8,7 +8,7 @@ import (
 	lg "github.com/charmbracelet/lipgloss"
 )
 
-var userStyle = lg.NewStyle().Width(12).Padding(1, 0).Inline(true)
+var userStyle = lg.NewStyle().Width(14).Padding(1, 0).Inline(true)
 
 // List of users in room
 func (m *model) listUsers() string {
@@ -76,11 +76,16 @@ func newUserLine(u *user) string {
 		}
 		return ""
 	})()
-	username := userStyle.Render(fmt.Sprintf("%s %s", u.name, isHost))
-	userColor := style().Foreground(u.color).Render("● ")
+	displayedName := func() string {
+		if len(u.name) > 11 {
+			return u.name[0:11] + "…"
+		}
+		return u.name
+	}()
+	username := userStyle.Render(fmt.Sprintf("%s %s", displayedName, isHost))
+	userColor := style().Foreground(u.color).Render("●")
 
 	return fmt.Sprintf("%s %s", userColor, username)
-
 }
 
 // Styling for app header
@@ -148,6 +153,7 @@ func (m *model) listOptions() string {
 	}
 
 	cardBlock := lg.JoinHorizontal(lg.Center, cards...)
+	cardBlock = lg.JoinVertical(lg.Center, "Your vote", cardBlock)
 
 	userLine := newUserLine(m.user)
 	gap := strings.Repeat(" ", 8)

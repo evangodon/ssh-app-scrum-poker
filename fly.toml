@@ -1,4 +1,4 @@
-# fly.toml file generated for ssh-scrum-poker on 2022-07-24T13:06:28-04:00
+# fly.toml file generated for ssh-scrum-poker on 2022-08-04T17:03:08-04:00
 
 app = "ssh-scrum-poker"
 kill_signal = "SIGINT"
@@ -27,12 +27,3 @@ processes = []
   [[services.ports]]
     handlers = ["proxy_proto"]
     port = 22
-
-  [[services.ports]]
-    handlers = ["http"]
-    port = 80
-
-  [[services.ports]]
-    force_https = true
-    handlers = ["http"]
-    port = 443

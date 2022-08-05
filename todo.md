@@ -1,7 +1,7 @@
 
 # TODO
 
-- [ ] Make selected card more apparent
+- [X] Make selected card more apparent
 
 
 - [ ] Mouse support, see https://github.com/maaslalani/gambit/blob/main/game/game.go *Didn't work*

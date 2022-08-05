@@ -182,8 +182,8 @@ func (r *room) resetVotes() tea.Msg {
 
 // Create a new room
 func newRoom() room {
-	// users := []*user{}
-	users := testusers
+	users := []*user{}
+	// users := testusers
 
 	return room{
 		users: users,
@@ -192,12 +192,12 @@ func newRoom() room {
 			lg.Color("#cba6f7"),
 			lg.Color("#f38ba8"),
 			lg.Color("#eba0ac"),
+			lg.Color("#b4befe"),
 			lg.Color("#fab387"),
 			lg.Color("#f9e2af"),
 			lg.Color("#a6e3a1"),
 			lg.Color("#94e2d5"),
 			lg.Color("#74c7ec"),
-			lg.Color("#b4befe"),
 		},
 		displayVotes: false,
 	}

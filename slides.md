@@ -50,28 +50,35 @@ Libraries I used:
 ---
 
 # The process of building it
- 
+
+---
+
 ## Verify this was even possible 
 - No official support or docs for multi-users apps 
-- Challenges with syncing UI
+- Some challenges with syncing UI
 - Ensure every user has their own UI 
 
+---
+
 ## Working with BubbleTea, Creating the data model
-- Objects: **room, user**
 - The "TEA" architecture: **Model, Update, View**
+- Objects: **room, user**
+
+---
 
 ## Build the UI
-- One long string
+- The ui is one long string
 - All dimensions are hard-coded
 - No flex-box for layout 
 - Scrollable logs
 
 ## Deploy the server somewhere for demo
-- Fly.io
-- Linode
-- Ngrok
+- *Railway*
+- *Fly.io*
+- *Ngrok*
+- *Linode*
 
 ---
 
-## Thanks
+## Q/A
 
