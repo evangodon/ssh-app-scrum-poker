@@ -188,11 +188,12 @@ func newRoom() room {
 	return room{
 		users: users,
 		colors: []lg.Color{
+			lg.Color("#f5e0dc"),
 			lg.Color("#f5c2e7"),
-			lg.Color("#cba6f7"),
-			lg.Color("#f38ba8"),
 			lg.Color("#eba0ac"),
 			lg.Color("#b4befe"),
+			lg.Color("#cba6f7"),
+			lg.Color("#89dceb"),
 			lg.Color("#fab387"),
 			lg.Color("#f9e2af"),
 			lg.Color("#a6e3a1"),

@@ -1,7 +1,7 @@
 
 ---
 
-# Topic chosen: Mini multiplayer video game
+# Topic chosen: **Mini multiplayer video game**
 Workshop on building video game with multiplayer functionality.
 It can be 2d or 3d or even ASCII based game.
 
