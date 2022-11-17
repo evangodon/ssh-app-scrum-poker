@@ -17,13 +17,13 @@ type user struct {
 	color   lg.Color
 }
 
-func createId(s ssh.Session) string {
+func createID(s ssh.Session) string {
 	return fmt.Sprintf("%s.%s", s.RemoteAddr().String(), s.User())
 }
 
 func newUser(s ssh.Session) user {
 	return user{
-		id:     createId(s),
+		id:     createID(s),
 		name:   s.User(),
 		vote:   -1,
 		isHost: false,
